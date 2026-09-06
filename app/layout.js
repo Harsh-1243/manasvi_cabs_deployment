@@ -58,8 +58,6 @@
 //   );
 // }
 
-
-
 import { Plus_Jakarta_Sans, Caveat } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header/Header";
@@ -165,8 +163,7 @@ export default function RootLayout({ children }) {
               url: "https://manasvicabs.com",
               telephone: "+918347112150",
               email: "info.manasvicabs@gmail.com",
-              image:
-                "https://manasvicabs.com/images/manasvi-cabs-og.jpg",
+              image: "https://manasvicabs.com/images/manasvi-cabs-og.jpg",
               address: {
                 "@type": "PostalAddress",
                 streetAddress: "Talaja, Palitana, Bhavnagar",
@@ -201,23 +198,34 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className="min-h-full flex flex-col bg-white text-(--color-gray-dark)">
-        
         {/* ========== GOOGLE ADS GLOBAL TAG ========== */}
         {/* Async script to load Google Ads */}
-        <Script
+        {/* <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=AW-18295653975"
           strategy="afterInteractive"
         />
-        {/* Script to initialize Google Ads */}
-        <Script id="google-ads-init" strategy="afterInteractive">
+         <Script id="google-ads-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-18295653975');
           `}
-        </Script>
+        </Script> */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18295653975"
+        ></script>
+        <script>
+          {`
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-18295653975');
+`}
+        </script>
         {/* ========== END GOOGLE ADS GLOBAL TAG ========== */}
 
         {/* <ScrollToTop /> */}
