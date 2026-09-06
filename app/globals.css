@@ -1,0 +1,34 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap");
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ========================= ROOT VARIABLES ========================= */
+
+:root {
+  /* Exact Logo Brand Colors */
+  --color-brand-yellow: #fde047; /* Deep amber/yellow matching the 'MANASVI' text & pin */
+  --color-dark-yellow: #facc15;
+  --color-brand-black: #000000; /* Deep black matching the car silhouette & 'CABS' */
+
+  /* Neutral / Support Colors for Web Design */
+  --color-white: #ffffff; /* Main backgrounds */
+  --color-gray-dark: #222222; /* Slightly softer black for long paragraphs of text */
+  --color-gray-light: #f8f9fa; /* Very light gray for subtle section backgrounds */
+
+  /* Typography */
+  --font-primary: "Plus Jakarta Sans", sans-serif;
+  --font-accent: "Caveat", cursive;
+}
+/* ========================= BASE STYLES ========================= */
+
+body {
+  font-family: var(--font-primary);
+  color: var(
+    --color-gray-dark
+  ); /* Using dark gray for text reduces eye strain compared to pure black */
+  background-color: var(--color-white);
+}
