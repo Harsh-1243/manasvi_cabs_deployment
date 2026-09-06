@@ -214,7 +214,7 @@ const Footer = () => {
                     : "hover:text-(--color-brand-yellow)"
                 }`}
               >
-                Terms of Service
+                Term of Service
               </button>
 
               <span className="hidden sm:inline">|</span>
