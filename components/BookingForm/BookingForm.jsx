@@ -11,6 +11,7 @@
 //   RefreshCw,
 //   CheckCircle2,
 // } from "lucide-react";
+// import emailjs from "@emailjs/browser";
 
 // const TRIP_TYPES = [
 //   { label: "One Way", value: "One Way", icon: ArrowRight },
@@ -32,6 +33,7 @@
 //   });
 
 //   const [isSubmitted, setIsSubmitted] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
 
 //   const handleChange = (e) => {
 //     const { name, value } = e.target;
@@ -45,27 +47,54 @@
 //     setFormData((prevData) => ({ ...prevData, tripType: value }));
 //   };
 
-//   // const handleSubmit = (e) => {
-//   //   e.preventDefault();
-//   //   setIsSubmitted(true);
-//   // };
-
-//   const handleSubmit = (e) => {
+//   const handleSubmit = async (e) => {
 //     e.preventDefault();
 
-//     // 1. Show the success screen
-//     setIsSubmitted(true);
+//     if (isLoading) return;
+//     setIsLoading(true);
 
-//     // 2. 🚀 TRIGGER GOOGLE ADS CONVERSION
-//     if (typeof window !== "undefined" && window.gtag) {
-//       window.gtag("event", "conversion", {
-//         send_to: "AW-18295653975/ry8RCLz6le8cENeMhpRE", // <-- REPLACE THIS
-//         value: 0.0,
-//         currency: "INR",
-//       });
-//       console.log("✅ Google Ads conversion fired!");
-//     } else {
-//       console.warn("⚠️ Google Ads gtag not loaded yet");
+//     const templateParams = {
+//       from_name: formData.name,
+//       from_mobile: formData.mobile,
+//       pickup: formData.pickupCity,
+//       drop: formData.dropCity,
+//       trip_date: formData.date,
+//       trip_type: formData.tripType,
+//     };
+
+//     try {
+//       const serviceID = "service_v6bk9sc";
+//       const templateID = "template_28xzs9e";
+//       const publicKey = "SdWf-Wvm4v5N1C6bL";
+
+//       const response = await emailjs.send(
+//         serviceID,
+//         templateID,
+//         templateParams,
+//         publicKey,
+//       );
+
+//       console.log("✅ Email sent successfully!", response.text);
+
+//       setIsSubmitted(true);
+
+//       if (typeof window !== "undefined" && window.gtag) {
+//         window.gtag("event", "conversion", {
+//           send_to: "AW-18295653975/ry8RCLz6le8cENeMhpRE",
+//           value: 0.0,
+//           currency: "INR",
+//         });
+//         console.log("✅ Google Ads conversion fired!");
+//       } else {
+//         console.warn("⚠️ Google Ads gtag not loaded yet");
+//       }
+//     } catch (error) {
+//       console.error("❌ EmailJS error:", error.text || error);
+//       alert(
+//         "There was an issue submitting your booking. Please try again or call us directly.",
+//       );
+//     } finally {
+//       setIsLoading(false);
 //     }
 //   };
 
@@ -81,7 +110,6 @@
 //     });
 //   };
 
-//   // ================= SUCCESS SCREEN =================
 //   if (isSubmitted) {
 //     return (
 //       <div className="max-w-lg mx-auto p-8 bg-white rounded-[28px] border-[3px] border-(--color-brand-black) shadow-[8px_8px_0px_var(--color-brand-black)] text-center">
@@ -140,7 +168,6 @@
 //     );
 //   }
 
-//   // ================= BOOKING FORM =================
 //   return (
 //     <div className="max-w-lg mx-auto p-6 bg-white rounded-[28px] border-[3px] border-(--color-brand-black) shadow-[3px_3px_0px_var(--color-brand-black)]">
 //       {/* Header */}
@@ -195,7 +222,7 @@
 //           </div>
 //         </div>
 
-//         {/* Trip Type — segmented control */}
+//         {/* Trip Type */}
 //         <div className="flex flex-col">
 //           <label className="font-semibold mb-1 text-(--color-gray-dark) text-xs">
 //             Trip Type
@@ -222,7 +249,7 @@
 //           </div>
 //         </div>
 
-//         {/* Pickup / Drop — journey line */}
+//         {/* Route */}
 //         <div className="flex flex-col">
 //           <label className="font-semibold mb-1 text-(--color-gray-dark) text-xs">
 //             Route
@@ -283,13 +310,14 @@
 //           </div>
 //         </div>
 
-//         {/* Submit — boxy, matches BookNow/CallNow */}
+//         {/* Submit Button */}
 //         <button
 //           type="submit"
-//           className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-(--color-dark-yellow) text-(--color-brand-black) font-extrabold text-sm uppercase tracking-wider rounded-full border-2 border-(--color-brand-black) shadow-[4px_4px_0px_var(--color-brand-black)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_var(--color-brand-black)] transition-all cursor-pointer"
+//           disabled={isLoading}
+//           className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-(--color-dark-yellow) text-(--color-brand-black) font-extrabold text-sm uppercase tracking-wider rounded-full border-2 border-(--color-brand-black) shadow-[4px_4px_0px_var(--color-brand-black)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_var(--color-brand-black)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 //         >
 //           <Car className="w-4 h-4" strokeWidth={2.5} />
-//           Confirm Booking
+//           {isLoading ? "Sending..." : "Confirm Booking"}
 //         </button>
 //       </form>
 //     </div>
@@ -297,6 +325,8 @@
 // };
 
 // export default BookingForm;
+
+//
 
 "use client";
 
@@ -311,13 +341,16 @@ import {
   RefreshCw,
   CheckCircle2,
 } from "lucide-react";
-import emailjs from "@emailjs/browser"; // <-- 1. IMPORT EMAILJS
+import emailjs from "@emailjs/browser";
 
 const TRIP_TYPES = [
   { label: "One Way", value: "One Way", icon: ArrowRight },
   { label: "Round Trip", value: "Round trip", icon: RefreshCw },
   { label: "Local", value: "Local", icon: MapPin },
 ];
+
+// Your company WhatsApp number (with country code, no + or spaces)
+const COMPANY_WHATSAPP_NUMBER = "918487991243";
 
 const FIELD_BASE =
   "w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-(--color-brand-black) placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-(--color-dark-yellow) focus:border-transparent focus:bg-white transition-all duration-200";
@@ -333,7 +366,7 @@ const BookingForm = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // <-- 2. ADD LOADING STATE
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -347,15 +380,20 @@ const BookingForm = () => {
     setFormData((prevData) => ({ ...prevData, tripType: value }));
   };
 
-  // ================= UPDATED HANDLE SUBMIT =================
+  const sendToWhatsApp = () => {
+    const message = `*New Booking Request*%0A%0A*Name:* ${formData.name}%0A*Mobile:* ${formData.mobile}%0A*Trip Type:* ${formData.tripType}%0A*Pickup:* ${formData.pickupCity}%0A*Drop:* ${formData.dropCity}%0A*Date:* ${formData.date}`;
+
+    const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP_NUMBER}?text=${message}`;
+
+    window.open(whatsappUrl, "_blank");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prevent double submission
     if (isLoading) return;
     setIsLoading(true);
 
-    // 1. Prepare the data for EmailJS
     const templateParams = {
       from_name: formData.name,
       from_mobile: formData.mobile,
@@ -363,12 +401,9 @@ const BookingForm = () => {
       drop: formData.dropCity,
       trip_date: formData.date,
       trip_type: formData.tripType,
-      // Optional: Add a reply-to or custom message if needed
     };
 
-    // 2. Send the email using EmailJS
     try {
-      // ⚠️ REPLACE THESE THREE VALUES WITH YOUR ACTUAL EMAILJS CREDENTIALS
       const serviceID = "service_v6bk9sc";
       const templateID = "template_28xzs9e";
       const publicKey = "SdWf-Wvm4v5N1C6bL";
@@ -382,13 +417,14 @@ const BookingForm = () => {
 
       console.log("✅ Email sent successfully!", response.text);
 
-      // 3. SUCCESS: Show popup & fire Google Ads
       setIsSubmitted(true);
 
-      // 4. 🚀 TRIGGER GOOGLE ADS CONVERSION
+      // Open WhatsApp with pre-filled booking details for the company number
+      sendToWhatsApp();
+
       if (typeof window !== "undefined" && window.gtag) {
         window.gtag("event", "conversion", {
-          send_to: "AW-18295653975/ry8RCLz6le8cENeMhpRE", // Keep your conversion label here
+          send_to: "AW-18295653975/ry8RCLz6le8cENeMhpRE",
           value: 0.0,
           currency: "INR",
         });
@@ -397,7 +433,6 @@ const BookingForm = () => {
         console.warn("⚠️ Google Ads gtag not loaded yet");
       }
     } catch (error) {
-      // 5. ERROR: Alert the user and keep the form visible
       console.error("❌ EmailJS error:", error.text || error);
       alert(
         "There was an issue submitting your booking. Please try again or call us directly.",
@@ -419,7 +454,6 @@ const BookingForm = () => {
     });
   };
 
-  // ================= SUCCESS SCREEN =================
   if (isSubmitted) {
     return (
       <div className="max-w-lg mx-auto p-8 bg-white rounded-[28px] border-[3px] border-(--color-brand-black) shadow-[8px_8px_0px_var(--color-brand-black)] text-center">
@@ -478,7 +512,6 @@ const BookingForm = () => {
     );
   }
 
-  // ================= BOOKING FORM =================
   return (
     <div className="max-w-lg mx-auto p-6 bg-white rounded-[28px] border-[3px] border-(--color-brand-black) shadow-[3px_3px_0px_var(--color-brand-black)]">
       {/* Header */}
