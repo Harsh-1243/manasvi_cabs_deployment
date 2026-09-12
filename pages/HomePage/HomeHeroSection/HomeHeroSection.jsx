@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Sparkle } from "lucide-react";
+import { Sparkle, Phone, X } from "lucide-react";
 import BookNow from "../../../components/Buttons/BookNow/BookNow";
 import CallNow from "../../../components/Buttons/CallNow/CallNow";
 import BookingForm from "../../../components/BookingForm/BookingForm";
+import Link from "next/link";
 
 const STATS = [
   { value: "15k+", label: "Trips Completed" },
@@ -77,6 +78,22 @@ const useTypewriter = (words) => {
 
 const HomeHeroSection = () => {
   const { text: cityText, blink } = useTypewriter(CITY_NAMES);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isBookingOpen) return undefined;
+
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setIsBookingOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isBookingOpen]);
 
   return (
     <section
@@ -113,9 +130,22 @@ const HomeHeroSection = () => {
             and well-maintained vehicles.
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 mb-6">
-            <BookNow />
-            <CallNow />
+          <div className="flex flex-wrap items-center gap-4 mb-5">
+            <Link
+              href="tel:+918347112150"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-(--color-white) text-(--color-brand-black) border-2 border-(--color-brand-black) rounded-full font-bold text-sm uppercase tracking-wide shadow-[4px_4px_0px_var(--color-brand-black)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_var(--color-brand-black)] transition-all cursor-pointer"
+            >
+              <Phone className="w-4 h-4" strokeWidth={2.5} />
+              Call Now
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setIsBookingOpen(true)}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-(--color-dark-yellow) text-(--color-brand-black) border-2 border-(--color-brand-black) rounded-full font-bold text-sm uppercase tracking-wide shadow-[4px_4px_0px_var(--color-brand-black)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_var(--color-brand-black)] transition-all cursor-pointer"
+            >
+              Book Now
+            </button>
           </div>
 
           <div className="border-t-2 border-dashed border-(--color-brand-black)/25 mb-8" />
@@ -187,6 +217,33 @@ const HomeHeroSection = () => {
           }
         }
       `}</style>
+      {isBookingOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-(--color-brand-black)/60 overflow-y-auto"
+          onClick={() => setIsBookingOpen(false)}
+        >
+          <div className="min-h-full flex items-center justify-center p-4 sm:p-6">
+            <div
+              className="relative w-full max-w-md my-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setIsBookingOpen(false)}
+                aria-label="Close booking form"
+                className="absolute -top-3 -right-3 z-20 w-9 h-9 rounded-full bg-(--color-dark-yellow) border-[3px] border-(--color-brand-black) shadow-[4px_4px_0px_var(--color-brand-black)] flex items-center justify-center cursor-pointer"
+              >
+                <X
+                  className="w-4 h-4 text-(--color-brand-black)"
+                  strokeWidth={2.5}
+                />
+              </button>
+
+              <BookingForm />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
