@@ -677,6 +677,7 @@ import {
   Car,
   ArrowRight,
   RefreshCw,
+  Clock,
   CheckCircle2,
 } from "lucide-react";
 import emailjs from "@emailjs/browser";
@@ -696,6 +697,7 @@ const BookingForm = () => {
     pickupCity: "",
     dropCity: "",
     date: "",
+    time: "",
     mobile: "",
     tripType: "One Way",
   });
@@ -719,6 +721,18 @@ const BookingForm = () => {
     }));
   };
 
+  const formatTime = (time) => {
+    if (!time) return "";
+
+    const [hours, minutes] = time.split(":");
+    const hour = Number(hours);
+
+    const period = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12;
+
+    return `${formattedHour}:${minutes} ${period}`;
+  };
+
   // ================= HANDLE SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -735,6 +749,7 @@ const BookingForm = () => {
       pickup: formData.pickupCity,
       drop: formData.dropCity,
       trip_date: formData.date,
+      trip_time: formatTime(formData.time),
       trip_type: formData.tripType,
     };
 
@@ -768,6 +783,8 @@ const BookingForm = () => {
 📍 *Drop:* ${formData.dropCity}
 
 📅 *Pickup Date:* ${formData.date}
+
+⏰ *Pickup Time:* ${formatTime(formData.time)}
 
 Please contact the customer to confirm the booking and fare.`;
 
@@ -814,6 +831,7 @@ Please contact the customer to confirm the booking and fare.`;
       pickupCity: "",
       dropCity: "",
       date: "",
+      time: "",
       mobile: "",
       tripType: "One Way",
     });
@@ -1039,6 +1057,26 @@ Please contact the customer to confirm the booking and fare.`;
               type="date"
               name="date"
               value={formData.date}
+              onChange={handleChange}
+              required
+              className={`${FIELD_BASE} cursor-pointer`}
+            />
+          </div>
+        </div>
+
+        {/* Time */}
+        <div className="flex flex-col">
+          <label className="font-semibold mb-1 text-(--color-gray-dark) text-xs">
+            Pickup Time
+          </label>
+
+          <div className="relative">
+            <Clock className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+
+            <input
+              type="time"
+              name="time"
+              value={formData.time}
               onChange={handleChange}
               required
               className={`${FIELD_BASE} cursor-pointer`}
